@@ -36,15 +36,36 @@ When filesystem metadata is damaged, file carving recovers files by their signat
 # Clone and build
 git clone https://github.com/shubham/recovery.git
 cd recovery
+
+# Build CLI tool
 go build -o recover ./cmd/recover
+
+# Build interactive TUI tool
+go build -o recover-tui ./cmd/recover-tui
 
 # Or install directly
 go install github.com/shubham/recovery/cmd/recover@latest
+go install github.com/shubham/recovery/cmd/recover-tui@latest
 ```
 
 ## Usage
 
-### Basic Commands
+### Interactive TUI (Recommended for Beginners)
+
+```bash
+./recover-tui
+```
+
+This launches an interactive terminal interface that guides you through:
+1. Selecting source (physical device or disk image)
+2. Choosing a device from auto-detected list
+3. Selecting recovery mode (scan/recover/carve)
+4. Choosing file types to recover
+5. Setting output directory
+
+![TUI Screenshot](docs/tui-screenshot.png)
+
+### Command Line Interface
 
 ```bash
 # Scan for deleted files (doesn't recover, just lists)
@@ -176,9 +197,14 @@ Use carving when:
 
 ```
 recovery/
-├── cmd/recover/
-│   └── main.go              # CLI entry point
+├── cmd/
+│   ├── recover/             # CLI tool
+│   │   └── main.go
+│   └── recover-tui/         # Interactive TUI
+│       └── main.go
 ├── internal/
+│   ├── device/
+│   │   └── device.go        # Device discovery (macOS/Linux/Windows)
 │   ├── disk/
 │   │   ├── reader.go        # Raw disk I/O
 │   │   └── reader_test.go
